@@ -124,7 +124,8 @@ Navigate between lists and items using the keyboard. You can switch between diff
 
 Judo uses a configuration file to manage multiple databases. The configuration is stored in:
 
-- **Linux/macOS**: `~/.config/judo/judo.toml`
+- **Ubuntu**: `~/.config/judo/judo.toml`
+- **macOS**: `~/Library/Application Support/judo/`
 - **Windows**: `%APPDATA%\judo\judo.toml`
 
 The configuration file is automatically created on first run with a default database. You can add new databases through the UI or manually edit the configuration file. The default database is called "dojo". 
@@ -160,5 +161,6 @@ Your todo lists and items are stored in local SQLite databases on your computer.
 
 The databases and configuration are created automatically when you first run the application. Database files are stored in:
 
-- **Linux/macOS**: `~/.local/share/judo/`
+- **Ubuntu**: `~/.local/share/judo/`
+- **macOS**: `~/Library/Application Support/judo/`
 - **Windows**: `%APPDATA%\judo\`
