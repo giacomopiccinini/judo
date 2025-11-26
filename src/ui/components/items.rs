@@ -13,15 +13,18 @@ pub struct ItemsComponent;
 
 impl ItemsComponent {
     /// Apply styling to a todo item based on its completion status
-    fn style_item(ui_item: &UIItem) -> Span<'_> {
+    fn style_item(ui_item: &UIItem) -> Line<'_> {
         let name = ui_item.item.name.clone();
 
-        if ui_item.item.is_done {
+        let bullet = Span::from("• ");
+        let content = if ui_item.item.is_done {
             // Strike through completed items
             Span::styled(name, Style::default().add_modifier(Modifier::CROSSED_OUT))
         } else {
             Span::from(name)
-        }
+        };
+
+        Line::from(vec![bullet, content])
     }
 
     /// Select next element in the list of to-do items
