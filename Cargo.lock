@@ -913,7 +913,7 @@ dependencies = [
 
 [[package]]
 name = "judo"
-version = "1.1.6"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "chrono",

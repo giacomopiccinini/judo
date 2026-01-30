@@ -1,6 +1,6 @@
 [package]
 name = "judo"
-version = "1.1.6"
+version = "1.2.0"
 edition = "2024"
 authors = ["Giacomo Piccinini <giacomo.piccinini@proton.me>"]
 license = "MIT"
