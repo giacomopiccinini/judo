@@ -7,9 +7,9 @@ use std::path::PathBuf;
 const DEFAULT_DB_NAME: &str = "dojo";
 const DEFAULT_DB_FILE: &str = "judo.db";
 
-const DEFAULT_FG_COLOUR: &str = "#ffffff";
-const DEFAULT_FG_ALT_COLOUR: &str = "#ff0000";
-const DEFAULT_BG_COLOUR: &str = "#000000";
+const DEFAULT_FG_COLOUR: &str = "#FCF1D5";
+const DEFAULT_FG_ALT_COLOUR: &str = "#FFA69E";
+const DEFAULT_BG_COLOUR: &str = "#002626";
 
 /// Config file definition
 #[derive(Deserialize, Serialize, Clone)]
