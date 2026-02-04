@@ -154,6 +154,10 @@ impl TodoList {
 
         Ok(())
     }
+
+    pub async fn get_all_items(&self, pool: &SqlitePool) -> Result<Vec<TodoItem>> {
+        TodoItem::get_by_list_id(pool, self.id).await
+    }
 }
 
 impl TodoItem {

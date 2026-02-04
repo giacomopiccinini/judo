@@ -4,7 +4,7 @@ use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::str::FromStr;
 
 /// Create connection to SQLite DB pool and create DB if not present
-async fn get_db_pool(db_connection_str: &str) -> Result<SqlitePool> {
+pub async fn get_db_pool(db_connection_str: &str) -> Result<SqlitePool> {
     // Create connection options
     let opts = SqliteConnectOptions::from_str(db_connection_str)
         .with_context(|| "Failed to create options for DB")?

@@ -141,6 +141,18 @@ impl Config {
         &self.colours.background
     }
 
+    pub fn get_db_by_name(self, name: String) -> Result<DBConfig> {
+        let dbs = self.dbs;
+        for db in dbs {
+            if db.name == name {
+                return Ok(db);
+            }
+        }
+
+        eprintln!("ERROR: No database found called '{}'", name);
+        std::process::exit(exitcode::DATAERR)
+    }
+
     /// Get config of default database
     pub fn get_default(&self) -> Result<DBConfig> {
         let matching_dbs: Vec<_> = self

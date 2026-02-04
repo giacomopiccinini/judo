@@ -1,7 +1,7 @@
 //! Judo - A terminal-based todo list application
-
+use clap::Parser;
 use color_eyre::Result;
-use judo::app::App;
+use judo::{app::App, cli::{ops, args::{Cli, Commands, DbCommands, ItemCommands, ListCommands}}};
 
 /// Application entry point
 ///
@@ -9,11 +9,83 @@ use judo::app::App;
 /// and properly restores the terminal on exit.
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Set the terminal up
-    let mut terminal = ratatui::init();
-
+    let cli = Cli::parse();
+    
     // Set up the app
     let app = App::new().await;
+
+    //Handle CLI arguments
+    match cli.command {
+        //Database commands
+        Some(Commands::Dbs { command }) => {
+            match command {
+                Some(DbCommands::Show) => {
+                    ops::list_dbs(&app);
+                    return Ok(())
+                }
+                Some(DbCommands::Add { name }) => {
+                    ops::add_db(app, name).await;
+                    return Ok(())
+                }
+                None => {}
+            }
+        }
+        //List commands
+        Some(Commands::Lists { command }) => {
+            match command {
+                Some(ListCommands::Show) => {
+                    ops::list_lists(&app).await;
+                    return Ok(());
+                }
+                Some(ListCommands::Add {name, db }) => {
+                    ops::add_list(&app, name, &db).await;
+                    return Ok(());
+                }
+                Some(ListCommands::Delete {name, id, db }) => {
+                    ops::delete_list(&app, name, id, &db).await;
+                    return Ok(());
+                }
+                None => {}
+            }
+        }
+        //Item commands
+        Some(Commands::Items { command }) => {
+            match command {
+                Some(ItemCommands::Show) => {
+                    ops::list_items(&app).await;
+                    return Ok(());
+                }
+                Some(ItemCommands::Add {
+                    name, 
+                    db, 
+                    list_name, 
+                    list_id 
+                }) => {
+                    ops::add_item(&app, name, &db, list_id, list_name).await;
+                    return Ok(());
+                }
+                Some(ItemCommands::Delete {
+                    id, 
+                    db,
+                }) => {
+                    ops::delete_item(&app, id, &db).await;
+                    return Ok(());
+                }
+                Some(ItemCommands::ToggleDone { 
+                    id, 
+                    db 
+                }) => {
+                    ops::toggle_done_item(&app, id, &db).await;
+                    return Ok(());
+                }
+                None => {}
+            }
+        }
+        None => {}
+    }
+
+    // Set the terminal up
+    let mut terminal = ratatui::init();
 
     // Create and run the app
     let app_result = app.run(&mut terminal).await;

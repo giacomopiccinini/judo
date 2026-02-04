@@ -69,6 +69,35 @@ When you start Judo, you'll see the main interface with two panels:
 
 Navigate between lists and items using the keyboard. You can switch between different databases, create new ones, and manage your todos across multiple databases. All changes are automatically saved to your local database.
 
+### Command line usage
+Judo also provides subcommands for usage on the command line or inside of shell scripts. Add `help`, `-h`, or `--help` to any subcommand to show its usage:
+
+```
+$ judo help
+Judo - TUI for ToDo lists
+
+Usage: judo [COMMAND]
+
+Commands:
+  dbs    Manage databases
+  lists  Manage todo lists
+  items  Manage todo items
+  help   Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+```
+#### Example:
+```
+$ judo lists show
+Name          ID  DB          No of items
+----          --  --          -----------
+home          1   dojo        2
+work          2   dojo        3
+another list  1   another db  1
+```
+
 ## Key Bindings
 
 ### Main Screen
