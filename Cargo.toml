@@ -1,6 +1,6 @@
 [package]
 name = "judo"
-version = "1.2.0"
+version = "2.0.0"
 edition = "2024"
 authors = ["Giacomo Piccinini <giacomo.piccinini@proton.me>"]
 license = "MIT"
@@ -34,4 +34,7 @@ tokio = { version = "1.47.1", features = ["macros", "rt-multi-thread"] }
 toml = "0.9.5"
 
 [profile.release]
+codegen-units = 1
 lto = true
+opt-level = 3
+strip = true
