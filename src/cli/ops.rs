@@ -37,7 +37,7 @@ pub fn list_dbs(app: &App) -> Result<()> {
 pub async fn add_db(mut app: App, name: String) -> Result<()> {
     app.create_new_database(name, false)
         .await
-        .map_err(|e| anyhow::anyhow!(e))?;
+        .with_context(|| "Failed to create new database")?;
     Ok(())
 }
 
@@ -95,7 +95,9 @@ pub async fn list_lists(app: &App, name: Option<String>) -> Result<()> {
 
 /// Creates a new todo list in the specified database
 pub async fn add_list(app: &App, name: String, db_name: &Option<String>) -> Result<()> {
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
     let list = NewTodoList { name: name.clone() };
     TodoList::create(&pool, list)
         .await
@@ -110,7 +112,9 @@ pub async fn delete_list(
     id: Option<i64>,
     db_name: &Option<String>,
 ) -> Result<()> {
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
 
     let target_list = get_list_by_name_or_id(app, name, id, db_name).await?;
     target_list
@@ -177,7 +181,9 @@ pub async fn add_item(
     list_id: Option<i64>,
     list_name: Option<String>,
 ) -> Result<()> {
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
     let target_list = get_list_by_name_or_id(app, list_name, list_id, db_name).await?;
 
     let new_item = NewTodoItem {
@@ -194,8 +200,11 @@ pub async fn add_item(
 
 /// Deletes a todo item by ID from the specified database
 pub async fn delete_item(app: &App, id: i64, db_name: &Option<String>) -> Result<()> {
-    let db = get_db_from_option(app, db_name)?;
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let db = get_db_from_option(app, db_name)
+        .with_context(|| "Failed to get database from database name")?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
     let item = match TodoItem::get_by_id(&pool, id)
         .await
         .with_context(|| format!("Failed to query item with ID '{}'", id))?
@@ -217,8 +226,11 @@ pub async fn delete_item(app: &App, id: i64, db_name: &Option<String>) -> Result
 
 /// Toggles the completion status of a todo item
 pub async fn toggle_done_item(app: &App, id: i64, db_name: &Option<String>) -> Result<()> {
-    let db = get_db_from_option(app, db_name)?;
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let db = get_db_from_option(app, db_name)
+        .with_context(|| "Failed to get database from database name")?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
     let item = TodoItem::get_by_id(&pool, id)
         .await
         .with_context(|| format!("Failed to query item with ID '{}'", id))?;
@@ -266,8 +278,11 @@ async fn get_list_by_name_or_id(
     id: Option<i64>,
     db_name: &Option<String>,
 ) -> Result<TodoList> {
-    let db = get_db_from_option(app, db_name)?;
-    let pool = get_db_pool_from_option(app, db_name).await?;
+    let db = get_db_from_option(app, db_name)
+        .with_context(|| "Failed to get database from database name")?;
+    let pool = get_db_pool_from_option(app, db_name)
+        .await
+        .with_context(|| "Unable to get pool")?;
     match (id, name) {
         // Search by ID
         (Some(list_id), None) => {
@@ -315,7 +330,8 @@ async fn get_list_by_name_or_id(
 
 /// Gets a database connection pool for the specified database
 async fn get_db_pool_from_option(app: &App, db_option: &Option<String>) -> Result<Pool<Sqlite>> {
-    let target_db = get_db_from_option(app, db_option)?;
+    let target_db = get_db_from_option(app, db_option)
+        .with_context(|| "Failed to get database from database name")?;
     return get_db_pool(target_db.connection_str.as_str())
         .await
         .with_context(|| format!("Failed to create database pool for '{}'", target_db.name));
