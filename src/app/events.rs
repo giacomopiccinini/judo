@@ -1,6 +1,9 @@
 use crate::app::state::{App, CurrentScreen};
 use crate::ui::components::{ItemsComponent, ListsComponent};
 use crate::ui::cursor::CursorState;
+use arboard::Clipboard;
+#[cfg(target_os = "linux")]
+use arboard::SetExtLinux;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub struct EventHandler;
@@ -102,6 +105,27 @@ impl EventHandler {
             (KeyCode::Right, KeyModifiers::NONE) => {
                 if let Some(selected_list) = app.lists_component.get_selected_list_mut() {
                     ItemsComponent::select_first_item(selected_list);
+                }
+            }
+            // Copy all items
+            (KeyCode::Char('c'), KeyModifiers::NONE) => {
+                if let Some(selected_list) = app.lists_component.get_selected_list_mut() {
+                    let content = ItemsComponent::format_all_items(selected_list);
+
+                    // Spawn thread to keep clipboard alive until content is read
+                    #[cfg(target_os = "linux")]
+                    std::thread::spawn(move || {
+                        if let Ok(mut clipboard) = Clipboard::new() {
+                            // Use Linux extension to wait until clipboard is read
+                            let _ = clipboard.set().wait().text(content);
+                        }
+                    });
+                    #[cfg(not(target_os = "linux"))]
+                    std::thread::spawn(move || {
+                        if let Ok(mut clipboard) = Clipboard::new() {
+                            let _ = clipboard.set_text(content);
+                        }
+                    });
                 }
             }
             _ => {}

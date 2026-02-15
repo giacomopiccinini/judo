@@ -20,6 +20,7 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = "1.0.99"
+arboard = "3.6.1"
 chrono = { version = "0.4.41", features = ["serde"] }
 clap = { version = "4.5.56", features = ["derive"] }
 color-eyre = "0.6.5"
