@@ -49,7 +49,7 @@ impl EventHandler {
                     eprintln!("Failed to toggle item: {}", e);
                 }
             }
-            (KeyCode::Char('s'), KeyModifiers::CONTROL) => {
+            (KeyCode::Char('s'), KeyModifiers::ALT) => {
                 // Ctrl+S: Move selected list down
                 if let Err(e) =
                     ListsComponent::move_selected_list_down(&mut app.lists_component, &app.pool)
@@ -58,7 +58,7 @@ impl EventHandler {
                     eprintln!("Failed to move list down: {}", e);
                 }
             }
-            (KeyCode::Char('w'), KeyModifiers::CONTROL) => {
+            (KeyCode::Char('w'), KeyModifiers::ALT) => {
                 // Ctrl+W: Move selected list up
                 if let Err(e) =
                     ListsComponent::move_selected_list_up(&mut app.lists_component, &app.pool).await
@@ -66,7 +66,7 @@ impl EventHandler {
                     eprintln!("Failed to move list up: {}", e);
                 }
             }
-            (KeyCode::Up, KeyModifiers::CONTROL) => {
+            (KeyCode::Up, KeyModifiers::ALT) => {
                 // Ctrl+Up: Move selected item up
                 if let Some(selected_list) = app.lists_component.get_selected_list_mut()
                     && let Err(e) =
@@ -75,7 +75,7 @@ impl EventHandler {
                     eprintln!("Failed to move item up: {}", e);
                 }
             }
-            (KeyCode::Down, KeyModifiers::CONTROL) => {
+            (KeyCode::Down, KeyModifiers::ALT) => {
                 // Ctrl+Down: Move selected item down
                 if let Some(selected_list) = app.lists_component.get_selected_list_mut()
                     && let Err(e) =

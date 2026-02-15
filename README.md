@@ -123,10 +123,10 @@ another list  1   another db  1
 | `d` | Delete selected item |
 | `C` | Change/switch database |
 | `Enter` | Toggle item completion status |
-| `Ctrl + w` | Move list up in ordering |
-| `Ctrl + s` | Move list down in ordering |
-| `Ctrl + ↑` | Move item up in ordering |
-| `Ctrl + ↓` | Move item down in ordering |
+| `Alt/Option + w` | Move list up in ordering |
+| `Alt/Option + s` | Move list down in ordering |
+| `Alt/Option + ↑` | Move item up in ordering |
+| `Alt/Option + ↓` | Move item down in ordering |
 | `q` | Quit application |
 
 ### Database Management Screen
