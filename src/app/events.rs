@@ -186,6 +186,7 @@ impl EventHandler {
                     {
                         eprintln!("Failed to create list: {}", e);
                     } else {
+                        app.lists_component.select_last();
                         app.current_screen = CurrentScreen::Main;
                         app.input_state.clear();
                     }
@@ -225,6 +226,7 @@ impl EventHandler {
                     {
                         eprintln!("Failed to create item: {}", e);
                     } else {
+                        ItemsComponent::select_last_item(selected_list);
                         app.current_screen = CurrentScreen::Main;
                         app.input_state.clear();
                     }
