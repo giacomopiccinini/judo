@@ -47,6 +47,16 @@ impl ItemsComponent {
         }
     }
 
+    // Format all items in a list ready to be copied
+    pub fn format_all_items(ui_list: &mut UIList) -> String {
+        ui_list
+            .items
+            .iter()
+            .map(|ui_item| format!("- {}", ui_item.item.name))
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
     /// Toggle the "is done" status of the currently selected item
     pub async fn toggle_item_done(ui_list: &mut UIList, pool: &SqlitePool) -> Result<()> {
         if let Some(j) = ui_list.item_state.selected() {
@@ -153,7 +163,12 @@ impl ItemsComponent {
             Span::styled(" [d]", Style::default().fg(Color::from_str(hl).unwrap())),
             Span::styled("el", Style::default().fg(Color::from_str(fg).unwrap())),
             Span::styled(" [m]", Style::default().fg(Color::from_str(hl).unwrap())),
-            Span::styled("odify ", Style::default().fg(Color::from_str(fg).unwrap())),
+            Span::styled("odify", Style::default().fg(Color::from_str(fg).unwrap())),
+            Span::styled(" [c]", Style::default().fg(Color::from_str(hl).unwrap())),
+            Span::styled(
+                "opy items ",
+                Style::default().fg(Color::from_str(fg).unwrap()),
+            ),
             Span::raw(" "),
         ])
         .left_aligned();
