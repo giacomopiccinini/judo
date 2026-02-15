@@ -214,14 +214,16 @@ impl EventHandler {
 
     /// Handle key press from user in add database screen
     pub async fn handle_add_db_screen_key(app: &mut App, key: KeyEvent) {
-        match key.code {
-            KeyCode::Esc => app.exit_add_db_without_saving(),
-            KeyCode::Backspace => app.input_state.remove_char_before_cursor(),
-            KeyCode::Delete => app.input_state.delete_char_after_cursor(),
-            KeyCode::Char(value) => app.input_state.add_char(value),
-            KeyCode::Left => app.input_state.move_cursor_left(),
-            KeyCode::Right => app.input_state.move_cursor_right(),
-            KeyCode::Enter => {
+        match (key.code, key.modifiers) {
+            (KeyCode::Esc, KeyModifiers::NONE) => app.exit_add_db_without_saving(),
+            (KeyCode::Backspace, KeyModifiers::NONE) => app.input_state.remove_char_before_cursor(),
+            (KeyCode::Delete, KeyModifiers::NONE) => app.input_state.delete_char_after_cursor(),
+            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Left, KeyModifiers::NONE) => app.input_state.move_cursor_left(),
+            (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
+            (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
+            (KeyCode::Char('e'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_end(),
+            (KeyCode::Enter, KeyModifiers::NONE) => {
                 let db_name = app.input_state.get_text().to_string();
                 if !db_name.trim().is_empty() {
                     if let Err(e) = app.create_new_database(db_name, false).await {
