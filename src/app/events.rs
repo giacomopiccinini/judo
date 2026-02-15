@@ -110,14 +110,16 @@ impl EventHandler {
 
     /// Handle key press from user in add list screen
     pub async fn handle_add_or_modify_list_screen_key(app: &mut App, key: KeyEvent) {
-        match key.code {
-            KeyCode::Esc => app.exit_add_or_modify_list_without_saving(),
-            KeyCode::Backspace => app.input_state.remove_char_before_cursor(),
-            KeyCode::Delete => app.input_state.delete_char_after_cursor(),
-            KeyCode::Char(value) => app.input_state.add_char(value),
-            KeyCode::Left => app.input_state.move_cursor_left(),
-            KeyCode::Right => app.input_state.move_cursor_right(),
-            KeyCode::Enter => {
+        match (key.code, key.modifiers) {
+            (KeyCode::Esc, KeyModifiers::NONE) => app.exit_add_or_modify_list_without_saving(),
+            (KeyCode::Backspace, KeyModifiers::NONE) => app.input_state.remove_char_before_cursor(),
+            (KeyCode::Delete, KeyModifiers::NONE) => app.input_state.delete_char_after_cursor(),
+            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Left, KeyModifiers::NONE) => app.input_state.move_cursor_left(),
+            (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
+            (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
+            (KeyCode::Char('e'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_end(),
+            (KeyCode::Enter, KeyModifiers::NONE) => {
                 let list_name = app.input_state.get_text().to_string();
                 // Only do something if the list has a name
                 if !list_name.trim().is_empty() {
@@ -151,14 +153,16 @@ impl EventHandler {
 
     /// Handle key press from user in add item screen
     pub async fn handle_add_or_modify_item_screen_key(app: &mut App, key: KeyEvent) {
-        match key.code {
-            KeyCode::Esc => app.exit_add_item_without_saving(),
-            KeyCode::Backspace => app.input_state.remove_char_before_cursor(),
-            KeyCode::Delete => app.input_state.delete_char_after_cursor(),
-            KeyCode::Left => app.input_state.move_cursor_left(),
-            KeyCode::Right => app.input_state.move_cursor_right(),
-            KeyCode::Char(value) => app.input_state.add_char(value),
-            KeyCode::Enter => {
+        match (key.code, key.modifiers) {
+            (KeyCode::Esc, KeyModifiers::NONE) => app.exit_add_item_without_saving(),
+            (KeyCode::Backspace, KeyModifiers::NONE) => app.input_state.remove_char_before_cursor(),
+            (KeyCode::Delete, KeyModifiers::NONE) => app.input_state.delete_char_after_cursor(),
+            (KeyCode::Left, KeyModifiers::NONE) => app.input_state.move_cursor_left(),
+            (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
+            (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
+            (KeyCode::Char('e'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_end(),
+            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Enter, KeyModifiers::NONE) => {
                 let item_name = app.input_state.get_text().to_string();
                 if !item_name.trim().is_empty()
                     && let Some(selected_list) = app.lists_component.get_selected_list_mut()
