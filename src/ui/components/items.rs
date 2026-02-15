@@ -4,24 +4,23 @@ use anyhow::Result;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Alignment, Rect};
 use ratatui::style::{Color, Modifier, Style};
-use ratatui::text::{Line, Span};
+use ratatui::text::{Line, Span, Text};
 use ratatui::widgets::{
     Block, BorderType, Borders, HighlightSpacing, List, ListItem, Padding, StatefulWidget, Widget,
 };
 use sqlx::SqlitePool;
 use std::str::FromStr;
+use textwrap::wrap;
 pub struct ItemsComponent;
 
 impl ItemsComponent {
-    /// Apply styling to a todo item based on its completion status
-    fn style_item(ui_item: &UIItem) -> Span<'_> {
-        let name = ui_item.item.name.clone();
-
+    /// Return the style for a todo item based on its completion status
+    fn item_style(ui_item: &UIItem) -> Style {
         if ui_item.item.is_done {
             // Strike through completed items
-            Span::styled(name, Style::default().add_modifier(Modifier::CROSSED_OUT))
+            Style::default().add_modifier(Modifier::CROSSED_OUT)
         } else {
-            Span::from(name)
+            Style::default()
         }
     }
 
@@ -192,16 +191,36 @@ impl ItemsComponent {
             .border_type(BorderType::Rounded);
 
         if let Some(ui_list) = selected_list {
-            // Extract the corresponding items with styling
+            // Calculate available width for text wrapping
+            // Account for: highlight symbol " ▸ " (4 chars) + padding (2+2) + borders (2)
+            let highlight_symbol = " ▸ ";
+            let highlight_width = highlight_symbol.chars().count();
+            let available_width = area.width.saturating_sub(highlight_width as u16 + 6) as usize;
+
+            // Wrap each item's content to fit the available width
             let items: Vec<ListItem> = ui_list
                 .items
                 .iter()
-                .map(|ui_item| ListItem::from(Self::style_item(ui_item)))
+                .map(|ui_item| {
+                    let name = &ui_item.item.name;
+                    let style = Self::item_style(ui_item);
+
+                    let wrapped_lines: Vec<Line> = if available_width > 0 {
+                        wrap(name, available_width)
+                            .iter()
+                            .map(|line| Line::from(Span::styled(line.to_string(), style)))
+                            .collect()
+                    } else {
+                        vec![Line::from(Span::styled(name.clone(), style))]
+                    };
+
+                    ListItem::new(Text::from(wrapped_lines))
+                })
                 .collect();
 
             let list: List = List::new(items)
                 .block(block)
-                .highlight_symbol(" ▸ ")
+                .highlight_symbol(highlight_symbol)
                 .highlight_style(
                     // Swap foreground and background for selected item
                     Style::default()
