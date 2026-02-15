@@ -128,6 +128,26 @@ impl EventHandler {
                     });
                 }
             }
+            // Select first list
+            (KeyCode::Char('T'), KeyModifiers::SHIFT) => {
+                app.lists_component.select_first();
+            }
+            // Select last list
+            (KeyCode::Char('B'), KeyModifiers::SHIFT) => {
+                app.lists_component.select_last();
+            }
+            // Select the first item in the list
+            (KeyCode::Char('t'), KeyModifiers::NONE) => {
+                if let Some(selected_list) = app.lists_component.get_selected_list_mut() {
+                    ItemsComponent::select_first_item(selected_list);
+                }
+            }
+            // Select the last item in the list
+            (KeyCode::Char('b'), KeyModifiers::NONE) => {
+                if let Some(selected_list) = app.lists_component.get_selected_list_mut() {
+                    ItemsComponent::select_last_item(selected_list);
+                }
+            }
             _ => {}
         }
     }

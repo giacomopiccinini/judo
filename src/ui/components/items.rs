@@ -41,9 +41,12 @@ impl ItemsComponent {
 
     /// Select the first item in the list
     pub fn select_first_item(ui_list: &mut UIList) {
-        if ui_list.item_state.selected().is_none() {
-            ui_list.item_state.select_first();
-        }
+        ui_list.item_state.select_first();
+    }
+
+    /// Select the last item in the list
+    pub fn select_last_item(ui_list: &mut UIList) {
+        ui_list.item_state.select_last();
     }
 
     // Format all items in a list ready to be copied
