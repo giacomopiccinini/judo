@@ -121,6 +121,7 @@ another list  1   another db  1
 | `m` | Modify selected item |
 | `D` | Delete selected list |
 | `d` | Delete selected item |
+| `c` | Copy items to clipboard |
 | `C` | Change/switch database |
 | `Enter` | Toggle item completion status |
 | `Alt/Option + w` | Move list up in ordering |
