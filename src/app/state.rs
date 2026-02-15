@@ -8,7 +8,7 @@ use crate::ui::components::{
 };
 use crate::ui::cursor::CursorState;
 use crate::ui::layout::AppLayout;
-use color_eyre::Result;
+use anyhow::{Context, Result};
 use crossterm::event::{self, KeyEvent};
 use ratatui::DefaultTerminal;
 use ratatui::buffer::Buffer;
@@ -119,12 +119,11 @@ impl App {
     ) -> Result<()> {
         // Use data directory to standardize storage
         let data_dir = dirs::data_dir()
-            .ok_or_else(|| color_eyre::eyre::eyre!("Could not find data directory"))?
+            .ok_or_else(|| anyhow::anyhow!("Could not find data directory"))?
             .join("judo");
 
         // Create directory if it doesn't exist
-        std::fs::create_dir_all(&data_dir)
-            .map_err(|e| color_eyre::eyre::eyre!("Failed to create data directory: {}", e))?;
+        std::fs::create_dir_all(&data_dir).with_context(|| "Failed to create data directory")?;
 
         // Create path to new db file
         let db_file = format!("{}.db", db_name);
@@ -142,7 +141,7 @@ impl App {
         // Initialize the new database (this creates the file and runs migrations)
         init_db(&connection_str)
             .await
-            .map_err(|e| color_eyre::eyre::eyre!("Failed to initialize new database: {}", e))?;
+            .with_context(|| "Failed to initialize new database")?;
 
         // Add to config
         self.config.dbs.push(new_db_config);
@@ -154,13 +153,13 @@ impl App {
 
         // Write updated config to file
         let config_dir = dirs::config_dir()
-            .ok_or_else(|| color_eyre::eyre::eyre!("Could not find config directory"))?
+            .ok_or_else(|| anyhow::anyhow!("Could not find config directory"))?
             .join("judo");
         let config_path = config_dir.join("judo.toml");
 
         self.config
             .write(&config_path)
-            .map_err(|e| color_eyre::eyre::eyre!("Failed to save config: {}", e))?;
+            .with_context(|| "Failed to save config")?;
 
         // Update selected index to point to the new database
         self.selected_db_index = self.config.dbs.len() - 1;
@@ -292,7 +291,7 @@ impl App {
             // Initialize connection to the new database
             let new_pool = init_db(&selected_db.connection_str)
                 .await
-                .map_err(|e| color_eyre::eyre::eyre!("Failed to connect to database: {}", e))?;
+                .with_context(|| "Failed to connect to database")?;
 
             // Update app state
             self.current_db_config = selected_db.clone();
@@ -303,7 +302,7 @@ impl App {
             self.lists_component
                 .load_lists(&self.pool)
                 .await
-                .map_err(|e| color_eyre::eyre::eyre!("Failed to load lists: {}", e))?;
+                .with_context(|| "Failed to load lists")?;
 
             // Return to main screen
             self.current_screen = CurrentScreen::Main;
@@ -319,13 +318,13 @@ impl App {
 
             // Write updated config to file
             let config_dir = dirs::config_dir()
-                .ok_or_else(|| color_eyre::eyre::eyre!("Could not find config directory"))?
+                .ok_or_else(|| anyhow::anyhow!("Could not find config directory"))?
                 .join("judo");
             let config_path = config_dir.join("judo.toml");
 
             self.config
                 .write(&config_path)
-                .map_err(|e| color_eyre::eyre::eyre!("Failed to save config: {}", e))?;
+                .with_context(|| "Failed to save config")?;
         }
         Ok(())
     }

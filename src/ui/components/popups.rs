@@ -189,10 +189,7 @@ impl ChangeDBPopUp {
                 "et Default",
                 Style::default().fg(Color::from_str(fg).unwrap()),
             ),
-            Span::styled(
-                " [Esc]",
-                Style::default().fg(Color::from_str(hl).unwrap()),
-            ),
+            Span::styled(" [Esc]", Style::default().fg(Color::from_str(hl).unwrap())),
             Span::raw(" "),
         ]);
 
