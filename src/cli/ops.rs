@@ -55,7 +55,7 @@ pub async fn list_lists(app: &App, name: Option<String>) -> Result<()> {
         .config
         .dbs
         .iter()
-        .filter(|db| name.as_ref().map_or(true, |n| &db.name == n))
+        .filter(|db| name.as_ref().is_none_or(|n| &db.name == n))
         .collect();
 
     let mut tw = TabWriter::new(vec![]);
@@ -116,7 +116,7 @@ pub async fn delete_list(
     target_list
         .delete(&pool)
         .await
-        .with_context(|| format!("Failed to delete list"))?;
+        .with_context(|| "Failed to delete list".to_string())?;
     Ok(())
 }
 
@@ -241,7 +241,7 @@ pub async fn toggle_done_item(app: &App, id: i64, db_name: &Option<String>) -> R
 
 /// Returns the specified database configuration or the default if omitted
 fn get_db_from_option(app: &App, db: &Option<String>) -> Result<DBConfig> {
-    return match db {
+    match db {
         Some(name) => app
             .config
             .clone()
@@ -251,7 +251,7 @@ fn get_db_from_option(app: &App, db: &Option<String>) -> Result<DBConfig> {
             .config
             .get_default()
             .with_context(|| "Failed to get default database configuration"),
-    };
+    }
 }
 
 /// Retrieves a todo list by either name or ID from the specified database
