@@ -146,6 +146,8 @@ another list  1   another db  1
 | `Esc` | Cancel and return to previous screen |
 | `Backspace` | Delete last character |
 | `Delete` | Delete character after cursor |
+| `Ctrl + a`| Jump to start of the line |
+| `Ctrl + e`| Jump to end of the line |
 | `←` | Move cursor left |
 | `→` | Move cursor right |
 

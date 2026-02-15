@@ -77,6 +77,17 @@ pub trait CursorState {
         }
     }
 
+    /// Move cursor to the start of the line
+    fn move_cursor_to_start(&mut self) {
+        self.set_cursor_pos(0);
+    }
+
+    /// Move cursor to the end of the line
+    fn move_cursor_to_end(&mut self) {
+        let text_len = self.get_text().chars().count();
+        self.set_cursor_pos(text_len);
+    }
+
     /// Clear the text and reset cursor
     fn clear(&mut self) {
         self.get_text_mut().clear();
