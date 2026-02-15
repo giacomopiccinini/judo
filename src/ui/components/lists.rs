@@ -47,6 +47,16 @@ impl ListsComponent {
         self.list_state.select_previous();
     }
 
+    /// Select first element in the list of to-do lists
+    pub fn select_first(&mut self) {
+        self.list_state.select_first();
+    }
+
+    /// Select first element in the list of to-do lists
+    pub fn select_last(&mut self) {
+        self.list_state.select_last();
+    }
+
     /// Get currently selected list index
     pub fn selected(&self) -> Option<usize> {
         self.list_state.selected()
