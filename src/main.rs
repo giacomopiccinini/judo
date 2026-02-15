@@ -31,7 +31,6 @@ async fn main() -> Result<()> {
                 ops::add_db(app, name)
                     .await
                     .with_context(|| "Failed to add database")?;
-                return Ok(());
             }
             None => {}
         },
@@ -41,19 +40,16 @@ async fn main() -> Result<()> {
                 ops::list_lists(&app, name)
                     .await
                     .with_context(|| "Failed to list to-do lists")?;
-                return Ok(());
             }
             Some(ListCommands::Add { name, db }) => {
                 ops::add_list(&app, name, &db)
                     .await
                     .with_context(|| "Failed to add to-do list")?;
-                return Ok(());
             }
             Some(ListCommands::Delete { name, id, db }) => {
                 ops::delete_list(&app, name, id, &db)
                     .await
                     .with_context(|| "Failed to delete to-do list")?;
-                return Ok(());
             }
             None => {}
         },
@@ -63,7 +59,6 @@ async fn main() -> Result<()> {
                 ops::list_items(&app)
                     .await
                     .with_context(|| "Failed to list to-do items")?;
-                return Ok(());
             }
             Some(ItemCommands::Add {
                 name,
@@ -74,33 +69,33 @@ async fn main() -> Result<()> {
                 ops::add_item(&app, name, &db, list_id, list_name)
                     .await
                     .with_context(|| "Failed to add to-do item")?;
-                return Ok(());
             }
             Some(ItemCommands::Delete { id, db }) => {
                 ops::delete_item(&app, id, &db)
                     .await
                     .with_context(|| "Failed to delete to-do item")?;
-                return Ok(());
             }
             Some(ItemCommands::ToggleDone { id, db }) => {
                 ops::toggle_done_item(&app, id, &db)
                     .await
                     .with_context(|| "Failed to toggle to-do item status")?;
-                return Ok(());
             }
             None => {}
         },
-        None => {}
+        // No commands means use the TUI
+        None => {
+            // Set the terminal up
+            let mut terminal = ratatui::init();
+
+            // Create and run the app
+            let app_result = app.run(&mut terminal).await;
+
+            // Restore terminal to original state
+            ratatui::restore();
+
+            return app_result;
+        }
     }
 
-    // Set the terminal up
-    let mut terminal = ratatui::init();
-
-    // Create and run the app
-    let app_result = app.run(&mut terminal).await;
-
-    // Restore terminal to original state
-    ratatui::restore();
-
-    app_result
+    Ok(())
 }
