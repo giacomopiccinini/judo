@@ -62,7 +62,7 @@ impl EventHandler {
                 }
             }
             (KeyCode::Char('w'), KeyModifiers::ALT) => {
-                // Ctrl+W: Move selected list up
+                // alt +W: Move selected list up
                 if let Err(e) =
                     ListsComponent::move_selected_list_up(&mut app.lists_component, &app.pool).await
                 {
@@ -158,7 +158,9 @@ impl EventHandler {
             (KeyCode::Esc, KeyModifiers::NONE) => app.exit_add_or_modify_list_without_saving(),
             (KeyCode::Backspace, KeyModifiers::NONE) => app.input_state.remove_char_before_cursor(),
             (KeyCode::Delete, KeyModifiers::NONE) => app.input_state.delete_char_after_cursor(),
-            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Char(value), KeyModifiers::SHIFT | KeyModifiers::NONE) => {
+                app.input_state.add_char(value)
+            }
             (KeyCode::Left, KeyModifiers::NONE) => app.input_state.move_cursor_left(),
             (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
             (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
@@ -206,7 +208,9 @@ impl EventHandler {
             (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
             (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
             (KeyCode::Char('e'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_end(),
-            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Char(value), KeyModifiers::SHIFT | KeyModifiers::NONE) => {
+                app.input_state.add_char(value)
+            }
             (KeyCode::Enter, KeyModifiers::NONE) => {
                 let item_name = app.input_state.get_text().to_string();
                 if !item_name.trim().is_empty()
@@ -264,7 +268,9 @@ impl EventHandler {
             (KeyCode::Esc, KeyModifiers::NONE) => app.exit_add_db_without_saving(),
             (KeyCode::Backspace, KeyModifiers::NONE) => app.input_state.remove_char_before_cursor(),
             (KeyCode::Delete, KeyModifiers::NONE) => app.input_state.delete_char_after_cursor(),
-            (KeyCode::Char(value), KeyModifiers::NONE) => app.input_state.add_char(value),
+            (KeyCode::Char(value), KeyModifiers::SHIFT | KeyModifiers::NONE) => {
+                app.input_state.add_char(value)
+            }
             (KeyCode::Left, KeyModifiers::NONE) => app.input_state.move_cursor_left(),
             (KeyCode::Right, KeyModifiers::NONE) => app.input_state.move_cursor_right(),
             (KeyCode::Char('a'), KeyModifiers::CONTROL) => app.input_state.move_cursor_to_start(),
